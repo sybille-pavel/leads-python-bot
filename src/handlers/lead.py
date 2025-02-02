@@ -7,6 +7,8 @@ from states.state import Lead
 from keyboards import keyboards
 from static import messages
 
+from models.lead import LeadModel
+
 router = Router()
 
 
@@ -49,7 +51,12 @@ async def process_time(callback_query, state: FSMContext):
     user_data = await state.get_data()
     user_data["time"] = callback_query.data.replace("time_", "")
 
-
+    await LeadModel.create(
+        name=user_data["name"],
+        contact=user_data["contact"],
+        product=user_data["product"],
+        time=user_data["time"]
+    )
     await callback_query.message.answer(messages.FINAL)
     await state.clear()
     await callback_query.answer()

@@ -10,6 +10,7 @@ from core.logger import logger
 from core.redis_settings import redis_settings
 from handlers import register_handlers
 from loader import bot
+from database.database import init_db
 
 dp = Dispatcher(
     storage=RedisStorage(
@@ -19,7 +20,7 @@ dp = Dispatcher(
 
 
 async def start():
-    # await init_postgres()
+    await init_db()
 
     register_handlers(dp=dp)
     await dp.start_polling(bot)
