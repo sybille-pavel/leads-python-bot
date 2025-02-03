@@ -9,6 +9,9 @@ from static import messages
 
 from models.lead import LeadModel
 
+from services.google_sheets import GoogleSheetsClient
+from core.google_sheets_setting import google_sheets_setting
+
 router = Router()
 
 
@@ -50,6 +53,20 @@ async def process_product(callback_query, state: FSMContext):
 async def process_time(callback_query, state: FSMContext):
     user_data = await state.get_data()
     user_data["time"] = callback_query.data.replace("time_", "")
+
+    # Создаем экземпляр клиента для Google Таблиц
+    google_sheets_client = GoogleSheetsClient(
+        google_sheets_setting.credentials_json,
+        google_sheets_setting.spreadsheet_id,
+        google_sheets_setting.sheet_name)
+
+    # Добавляем данные в таблицу с именованными параметрами
+    google_sheets_client.append_data(
+        name=user_data["name"],
+        contact=user_data["contact"],
+        product=user_data["product"],
+        time=user_data["time"]
+    )
 
     await LeadModel.create(
         name=user_data["name"],
