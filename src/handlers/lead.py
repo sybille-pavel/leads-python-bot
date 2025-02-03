@@ -15,6 +15,8 @@ from core.config import settings
 
 from loader import bot
 
+from core.logger import logger
+
 router = Router()
 
 
@@ -78,10 +80,14 @@ async def process_time(callback_query, state: FSMContext):
         time=user_data["time"]
     )
 
-    await bot.send_message(
-        settings.notify_chat_id,
-        messages.get_lead(lead)
-    )
+    try:
+        await bot.send_message(
+            settings.notify_chat_id,
+            messages.get_lead(lead)
+        )
+    except Exception as e:
+        logger.warning('Ошибка при отправлении сообщения менеджеру')
+        logger.warning(e)
 
     await callback_query.message.answer(messages.FINAL)
 

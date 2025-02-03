@@ -1,6 +1,6 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
+from core.logger import logger
 
 class GoogleSheetsClient:
     def __init__(self, credentials_json, spreadsheet_id, sheet_name):
@@ -33,6 +33,6 @@ class GoogleSheetsClient:
             worksheet = self.get_worksheet()
             row = [name, contact, product, time]
             worksheet.append_row(row)
-            print("Данные успешно добавлены в таблицу!")
         except Exception as e:
-            print(f"Ошибка при добавлении данных в таблицу: {e}")
+            logger.warning('Ошибка при добавлении данных в таблицу')
+            logger.warning(e)
