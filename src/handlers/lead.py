@@ -11,6 +11,9 @@ from models.lead import LeadModel
 
 from services.google_sheets import GoogleSheetsClient
 from core.google_sheets_setting import google_sheets_setting
+from core.config import settings
+
+from loader import bot
 
 router = Router()
 
@@ -68,12 +71,19 @@ async def process_time(callback_query, state: FSMContext):
         time=user_data["time"]
     )
 
-    await LeadModel.create(
+    lead = await LeadModel.create(
         name=user_data["name"],
         contact=user_data["contact"],
         product=user_data["product"],
         time=user_data["time"]
     )
+
+    await bot.send_message(
+        settings.notify_chat_id,
+        messages.get_lead(lead)
+    )
+
     await callback_query.message.answer(messages.FINAL)
+
     await state.clear()
     await callback_query.answer()

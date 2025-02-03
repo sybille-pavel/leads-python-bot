@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     admin_ids: str
+    notify_chat_id: str
 
     model_config = SettingsConfigDict(env_file='.env', extra='allow')
 
